@@ -46,6 +46,17 @@ public class LMS {
 
         // Student checks their grades
         student1.checkGrades();
+
+        // Academic staff uploads content
+        staff1.uploadContent("Lecture 1", "Lecture1_Slides.pdf");
+
+        // Discussion forum interaction
+        DiscussionForum forum = new DiscussionForum();
+        forum.postMessage(staff1, "Welcome to the course! Feel free to ask any questions.");
+        forum.postMessage(student1, "Thank you, Dr. Smith! I have a question about the first lecture.");
+
+        // Display forum messages
+        forum.displayMessages();
     }
 
     // Method to authenticate users
@@ -64,6 +75,10 @@ abstract class User {
         this.name = name;
         this.email = email;
         this.password = password;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getEmail() {
@@ -123,14 +138,23 @@ class Student extends User {
 
 // Class for Academic Staff
 class AcademicStaff extends User {
+    private List<Content> contents;
+
     public AcademicStaff(String name, String email, String password) {
         super(name, email, password);
+        this.contents = new ArrayList<>();
     }
 
     @Override
     public void accessCourseMaterial() {
         System.out.println("Accessing course materials for academic staff...");
         // Code to access course materials for academic staff
+    }
+
+    public void uploadContent(String title, String fileName) {
+        Content content = new Content(title, fileName);
+        contents.add(content);
+        System.out.println("Uploaded " + fileName + " as " + title);
     }
 
     public void gradeAssignment(Student student, String title, int score) {
@@ -191,6 +215,25 @@ class Grade {
     }
 }
 
+// Class to represent Content uploaded by Academic Staff
+class Content {
+    private String title;
+    private String fileName;
+
+    public Content(String title, String fileName) {
+        this.title = title;
+        this.fileName = fileName;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+}
+
 // Class to represent an Event in the academic calendar
 class Event {
     private String title;
@@ -226,6 +269,47 @@ class AcademicCalendar {
         System.out.println("Academic Calendar:");
         for (Event event : events) {
             System.out.println(event.getDate() + " - " + event.getTitle());
+        }
+    }
+}
+
+// Class to represent a Message in the discussion forum
+class Message {
+    private User user;
+    private String content;
+
+    public Message(User user, String content) {
+        this.user = user;
+        this.content = content;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public String getContent() {
+        return content;
+    }
+}
+
+// Class to represent the Discussion Forum
+class DiscussionForum {
+    private List<Message> messages;
+
+    public DiscussionForum() {
+        this.messages = new ArrayList<>();
+    }
+
+    public void postMessage(User user, String content) {
+        Message message = new Message(user, content);
+        messages.add(message);
+        System.out.println(user.getName() + " posted: " + content);
+    }
+
+    public void displayMessages() {
+        System.out.println("Discussion Forum Messages:");
+        for (Message message : messages) {
+            System.out.println(message.getUser().getName() + ": " + message.getContent());
         }
     }
 }

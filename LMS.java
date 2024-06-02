@@ -5,8 +5,8 @@ import java.util.List;
 public class LMS {
     public static void main(String[] args) {
         // Create some sample users
-        User student1 = new Student("John Doe", "john.doe@flinders.edu.au", "password123");
-        User staff1 = new AcademicStaff("Dr. Smith", "smith@flinders.edu.au", "securepass");
+        Student student1 = new Student("John Doe", "john.doe@flinders.edu.au", "password123");
+        AcademicStaff staff1 = new AcademicStaff("Dr. Smith", "smith@flinders.edu.au", "securepass");
 
         // Authenticate users
         if (authenticate(student1, "john.doe@flinders.edu.au", "password123")) {
@@ -34,6 +34,18 @@ public class LMS {
 
         // Display academic calendar
         calendar.displaySchedule();
+
+        // Student uploads an assignment
+        student1.uploadAssignment("Assignment 1", "Assignment1_Submission.pdf");
+
+        // Student takes an online exam
+        student1.takeExam("Midterm Exam");
+
+        // Academic staff grades an assignment
+        staff1.gradeAssignment(student1, "Assignment 1", 85);
+
+        // Student checks their grades
+        student1.checkGrades();
     }
 
     // Method to authenticate users
@@ -67,14 +79,45 @@ abstract class User {
 
 // Class for a Student
 class Student extends User {
+    private List<Assignment> assignments;
+    private List<Exam> exams;
+    private List<Grade> grades;
+
     public Student(String name, String email, String password) {
         super(name, email, password);
+        this.assignments = new ArrayList<>();
+        this.exams = new ArrayList<>();
+        this.grades = new ArrayList<>();
     }
 
     @Override
     public void accessCourseMaterial() {
         System.out.println("Accessing course materials for students...");
         // Code to access course materials for students
+    }
+
+    public void uploadAssignment(String title, String fileName) {
+        Assignment assignment = new Assignment(title, fileName);
+        assignments.add(assignment);
+        System.out.println("Uploaded " + fileName + " for " + title);
+    }
+
+    public void takeExam(String title) {
+        Exam exam = new Exam(title);
+        exams.add(exam);
+        System.out.println("Taking " + title + " exam...");
+        // Code to take the exam
+    }
+
+    public void checkGrades() {
+        System.out.println("Checking grades...");
+        for (Grade grade : grades) {
+            System.out.println(grade.getTitle() + ": " + grade.getScore());
+        }
+    }
+
+    public void addGrade(Grade grade) {
+        grades.add(grade);
     }
 }
 
@@ -88,6 +131,63 @@ class AcademicStaff extends User {
     public void accessCourseMaterial() {
         System.out.println("Accessing course materials for academic staff...");
         // Code to access course materials for academic staff
+    }
+
+    public void gradeAssignment(Student student, String title, int score) {
+        Grade grade = new Grade(title, score);
+        student.addGrade(grade);
+        System.out.println("Graded " + title + " with score " + score);
+    }
+}
+
+// Class to represent an Assignment
+class Assignment {
+    private String title;
+    private String fileName;
+
+    public Assignment(String title, String fileName) {
+        this.title = title;
+        this.fileName = fileName;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+}
+
+// Class to represent an Exam
+class Exam {
+    private String title;
+
+    public Exam(String title) {
+        this.title = title;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+}
+
+// Class to represent a Grade
+class Grade {
+    private String title;
+    private int score;
+
+    public Grade(String title, int score) {
+        this.title = title;
+        this.score = score;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public int getScore() {
+        return score;
     }
 }
 
